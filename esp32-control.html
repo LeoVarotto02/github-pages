@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controllo ESP32</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 50px;
+    }
+    .slider-container {
+      margin: 20px auto;
+      width: 300px;
+    }
+    .buttons {
+      margin: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .value-display {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Controllo ESP32</h1>
+  
+  <!-- Slider -->
+  <div class="slider-container">
+    <input type="range" id="angleSlider" min="-90" max="90" value="0" step="1" oninput="updateValue()">
+    <div class="value-display">Valore: <span id="sliderValue">0</span>°</div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="buttons">
+    <button onclick="sendCommand('up')">▲</button>
+    <button onclick="sendCommand('down')">▼</button>
+  </div>
+
+  <script>
+    const esp32Ip = "http://192.168.1.100"; // Sostituisci con l'indirizzo IP del tuo ESP32
+
+    // Aggiorna il valore visualizzato dello slider
+    function updateValue() {
+      const slider = document.getElementById('angleSlider');
+      const valueDisplay = document.getElementById('sliderValue');
+      valueDisplay.textContent = slider.value;
+    }
+
+    // Invia i comandi all'ESP32
+    function sendCommand(command) {
+      const slider = document.getElementById('angleSlider');
+      const sliderValue = slider.value; // Valore corrente dello slider
+
+      // Costruisce l'URL per inviare il comando
+      const url = esp32Ip + '/' + command + '?value=' + sliderValue;
+
+      fetch(url)
+        .then(response => response.text())
+        .then(data => console.log("Risposta ESP32:", data))
+        .catch(error => console.error("Errore:", error));
+    }
+  </script>
+</body>
+</html>
